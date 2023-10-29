@@ -7,14 +7,10 @@ WORKDIR /app
 
 COPY ./requirements.txt /app/requirements.txt
 
-RUN pip install --no-cache-dir --upgrade -r /app/requirements.txt
-
-ENV DATABASE_URL ${DATABASE_URL}
+RUN pip install --no-cache-dir --upgrade --trusted-host pypi.org --trusted-host pypi.python.org --trusted-host files.pythonhosted.org -r requirements.txt
 
 COPY src /app/src
 
-COPY ./create_config.sh /app/create_config.sh
+EXPOSE 8000
 
-EXPOSE ${API_PORT}
-
-CMD ["bash", "-c", "./create_config.sh && uvicorn src.main:app --host 0.0.0.0 --port ${API_PORT} --reload"]
+CMD ["uvicorn", "src.main:app", "--proxy-headers", "--host", "0.0.0.0", "--port", "8000"]
