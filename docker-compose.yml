@@ -2,9 +2,18 @@ version: "3.8"
 services:
   api:
       build: .
+      hostname: db-api
       ports:
-        - '8080:8080'
+        - '8000:8000'
       volumes:
         - ./src:/app/src
       env_file:
-      - .env
+        - .env
+      networks:
+        - es-net
+networks:
+  es-net:
+    name: es-net
+    external: true
+
+  
