@@ -1,5 +1,6 @@
 from fastapi import FastAPI, UploadFile, HTTPException
 from fastapi.responses import JSONResponse
+from fastapi.middleware.cors import CORSMiddleware
 from elasticsearch import Elasticsearch, helpers
 from dotenv import load_dotenv
 import os
@@ -23,6 +24,18 @@ def get_env_vars() -> dict:
 app = FastAPI()
 ENV_VARS = get_env_vars()
 NETWORK_FLOW_INDEX_NAME = "network_flows"
+
+origins = [
+    "*"
+]
+
+app.add_middleware(
+    CORSMiddleware,
+    allow_origins=origins,
+    allow_credentials=True,
+    allow_methods=["*"],
+    allow_headers=["*"],
+)
 
 
 def get_es() -> Elasticsearch:
