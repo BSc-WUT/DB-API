@@ -107,6 +107,7 @@ NETWORK_FLOW_KEYS: list = [
 
 
 class NetworkFlow(BaseModel):
+    label: str
     src_ip: str
     dst_ip: str
     src_port: str

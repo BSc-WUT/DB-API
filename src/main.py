@@ -101,6 +101,13 @@ async def add_network_flow(network_flow: NetworkFlow) -> JSONResponse:
         index=NETWORK_FLOW_INDEX_NAME, doc_type="_doc", body=network_flow.dict()
     )
 
+@app.put('/network_flow/{flow_id}')
+async def update_network_flow(flow_id: str, network_flow: NetworkFlow) -> JSONResponse:
+    network_flow_index_exists()
+    return es.update(
+        index=NETWORK_FLOW_INDEX_NAME, doc_type='_doc', id=flow_id, body=network_flow.dict()
+    )
+
 
 @app.post("/network_flows/bulk_upload")  # ✅
 async def bulk_network_flow_upload(bulk_file: UploadFile) -> JSONResponse:
