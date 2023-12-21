@@ -101,11 +101,11 @@ async def add_network_flow(network_flow: NetworkFlow) -> JSONResponse:
         index=NETWORK_FLOW_INDEX_NAME, doc_type="_doc", body=network_flow.dict()
     )
 
-@app.put('/network_flow/{flow_id}')
+@app.put('/network_flows/{flow_id}')
 async def update_network_flow(flow_id: str, network_flow: NetworkFlow) -> JSONResponse:
     network_flow_index_exists()
     return es.update(
-        index=NETWORK_FLOW_INDEX_NAME, doc_type='_doc', id=flow_id, body=network_flow.dict()
+        index=NETWORK_FLOW_INDEX_NAME, id=flow_id, body=network_flow.dict()
     )
 
 
