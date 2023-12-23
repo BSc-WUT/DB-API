@@ -41,7 +41,7 @@ app.add_middleware(
 
 def get_es() -> Elasticsearch:
     connection_config: list = [{'host': ENV_VARS['DB'], "port": ENV_VARS['DB_PORT']}]
-    es: Elasticsearch = Elasticsearch(connection_config, http_auth=(ENV_VARS['DB_USER'], ENV_VARS['DB_PASSWORD']))
+    es: Elasticsearch = Elasticsearch(connection_config)
     return es
 
 
