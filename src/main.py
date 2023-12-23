@@ -8,22 +8,23 @@ import csv
 import io
 
 from .models import NetworkFlowMapping, NetworkFlow
+from .vars import NETWORK_FLOWS_MAPPINGS, NETWORK_FLOW_INDEX_NAME
 
 
 def get_env_vars() -> dict:
     load_dotenv()
     return {
-        "DB_HOST": os.getenv("DATABASE_HOST"),
         "DB_PORT": os.getenv("DATABASE_PORT"),
         "DB_USER": os.getenv("DATABASE_USER"),
         "DB_PASSWORD": os.getenv("DATABASE_PASSWORD"),
         "API_PORT": os.getenv("API_PORT"),
+        "DB": os.getenv('DATABASE'),
     }
 
 
 app = FastAPI()
 ENV_VARS = get_env_vars()
-NETWORK_FLOW_INDEX_NAME = "network_flows"
+
 
 origins = [
     "*"
@@ -39,8 +40,8 @@ app.add_middleware(
 
 
 def get_es() -> Elasticsearch:
-    url: str = f"http://{ENV_VARS['DB_USER']}:{ENV_VARS['DB_PASSWORD']}@{ENV_VARS['DB_HOST']}:{ENV_VARS['DB_PORT']}"
-    es: Elasticsearch = Elasticsearch(url)
+    connection_config: list = [{'host': ENV_VARS['DB'], "port": ENV_VARS['DB_PORT']}]
+    es: Elasticsearch = Elasticsearch(connection_config, http_auth=(ENV_VARS['DB_USER'], ENV_VARS['DB_PASSWORD']))
     return es
 
 
@@ -49,10 +50,8 @@ es = get_es()
 
 def network_flow_index_exists() -> None:
     if not es.indices.exists(index=NETWORK_FLOW_INDEX_NAME):
-        raise HTTPException(
-            status_code=404,
-            detail=f"Index: {NETWORK_FLOW_INDEX_NAME} does exists in ElasticSearch database.",
-        )
+        create_index(NETWORK_FLOW_INDEX_NAME, NETWORK_FLOWS_MAPPINGS)
+
 
 
 """ INDEXES """
